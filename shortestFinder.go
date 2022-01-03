@@ -9,9 +9,10 @@ import (
 )
 
 type locationRecords struct {
-	records      [][]string
-	index        []int
-	distance     func(int, int) float64
+	records       [][]string
+	index         []int
+	storedRecords [][]float64
+	distance      func(int, int) float64
 }
 
 func tableLoader(filePath string) locationRecords { // csv loader
@@ -26,10 +27,12 @@ func tableLoader(filePath string) locationRecords { // csv loader
 	if err != nil {
 		log.Fatal("Unable to parse file as CSV for "+filePath, err)
 	}
+	storedRecords := newMatrix(len(records), len(records), -1)
 
 	location := locationRecords{
-		records: records,
-		index:   NewSlice(1, len(records), 1),
+		records:       records,
+		index:         newSlice(1, len(records), 1),
+		storedRecords: storedRecords,
 		distance: func(from int, to int) float64 {
 
 			getFromIndex := func(index int) [2]int64 {
@@ -39,17 +42,37 @@ func tableLoader(filePath string) locationRecords { // csv loader
 				thisLocation[1], _ = strconv.ParseInt(info[2], 0, 64)
 				return thisLocation
 			}
-			fromLocation := getFromIndex(from)
-			toLocation := getFromIndex(to)
-			horizontal := fromLocation[0]-toLocation[0]
-			vertical := fromLocation[1]-toLocation[1]
-			return math.Sqrt(math.Pow(float64(horizontal),2)+math.Pow(float64(vertical),2))
+
+			if storedRecords[from][to] != -1 {
+				return storedRecords[from][to]
+			} else {
+				fromLocation := getFromIndex(from)
+				toLocation := getFromIndex(to)
+				horizontal := fromLocation[0] - toLocation[0]
+				vertical := fromLocation[1] - toLocation[1]
+				thisDistance := math.Sqrt(math.Pow(float64(horizontal), 2) + math.Pow(float64(vertical), 2))
+				storedRecords[from][to] = thisDistance
+				return thisDistance
+			}
 		},
 	}
 	return location
 }
 
-func NewSlice(start, end, step int) []int {
+func newMatrix(row int, col int, fill float64) [][]float64 {
+	m := make([][]float64, row)
+	for i := range m {
+		m[i] = make([]float64, col)
+	}
+	for i := 0; i < row; i++ {
+		for j := 0; j < col; j++ {
+			m[i][j] = fill
+		}
+	}
+	return m
+}
+
+func newSlice(start, end, step int) []int {
 	if step <= 0 || end < start {
 		return []int{}
 	}
@@ -63,7 +86,6 @@ func NewSlice(start, end, step int) []int {
 
 func main() {
 	df := tableLoader("distance.csv")
-	println(df.distance(3,4))
+	println(df.distance(3, 4))
+	println(df.distance(3, 4))
 }
-
-
