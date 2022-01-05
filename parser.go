@@ -31,7 +31,7 @@ func tableLoader(filePath string) locationRecords { // csv loader
 
 	location := locationRecords{
 		records:       records,
-		index:         newSlice(1, len(records), 1),
+		index:         newSlice(0, len(records)-1, 1),
 		storedRecords: storedRecords,
 		distance: func(from int, to int) float64 {
 
@@ -43,7 +43,9 @@ func tableLoader(filePath string) locationRecords { // csv loader
 				return thisLocation
 			}
 
-			if storedRecords[from][to] != -1 {
+			if from == to {
+				return math.MaxFloat64
+			} else if storedRecords[from][to] != -1 {
 				return storedRecords[from][to]
 			} else {
 				fromLocation := getFromIndex(from)
@@ -86,6 +88,7 @@ func newSlice(start, end, step int) []int {
 
 func main() {
 	df := tableLoader("distance.csv")
-	println(df.distance(3, 4))
-	println(df.distance(3, 4))
+	for _, s := range NearestNeighbor(&df) {
+		println(s)
+	}
 }
