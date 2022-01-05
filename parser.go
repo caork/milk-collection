@@ -88,7 +88,7 @@ func newSlice(start, end, step int) []int {
 
 func main() {
 	df := tableLoader("distance.csv")
-	for _, s := range NearestNeighbor(&df) {
+	for _, s := range NearestInsert(&df) {
 		println(s)
 	}
 }

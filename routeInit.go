@@ -58,64 +58,64 @@ func NearestNeighbor(records *locationRecords) []int {
 	return append(currentPlace, placesNotIn[0]) // add the last one
 }
 
-//
-//func NearestInsert(records *locationRecords) []int {
-//	var currentPlace []int
-//	placesNotIn := records.index
-//	chosenPlace := rand.Intn(len(placesNotIn))
-//	currentPlace = append(currentPlace, chosenPlace)
-//	placesNotIn = remove(placesNotIn,chosenPlace)
-//	isFirstChoose := true
-//	choose := func() int {
-//		var nearest float64
-//		if isFirstChoose{
-//			nearest = records.distance(chosenPlace, placesNotIn[0])
-//			isFirstChoose = false
-//		}else{
-//			nearest = math.MaxFloat64
-//		}
-//		targetIndex := 0
-//		for _, place := range currentPlace {
-//			for j, target := range placesNotIn {
-//				distance := records.distance(place, target)
-//				if distance < nearest {
-//					nearest = distance
-//					targetIndex = j
-//				}
-//			}
-//		}
-//		returnIndex := placesNotIn[targetIndex]
-//		placesNotIn = remove(placesNotIn, targetIndex)
-//		return returnIndex
-//	}
-//
-//	reArrangeRoute := func(newPlace int) {
-//		shortestDistance := math.MaxFloat64
-//		var shortestRoute []int
-//		var fairlyShortRoute []int
-//		for i := range currentPlace {
-//			if i == 0{
-//				fairlyShortRoute = append([]int{newPlace},currentPlace...)
-//			}else if i == len(currentPlace)-1{
-//				fairlyShortRoute = append(fairlyShortRoute,newPlace)
-//			}else{
-//				fairlyShortRoute = append(fairlyShortRoute[:i+1],fairlyShortRoute[i:]...)
-//				fairlyShortRoute[i] = newPlace
-//			}
-//			distance := totalDistance(fairlyShortRoute,records)
-//			if shortestDistance > distance{
-//				shortestDistance = distance
-//				shortestRoute = fairlyShortRoute
-//			}
-//		}
-//		currentPlace =  shortestRoute
-//
-//	}
-//
-//	for len(placesNotIn) > 1 {
-//		reArrangeRoute(choose())
-//	}
-//	reArrangeRoute(placesNotIn[0])
-//	return currentPlace
-//
-//}
+func NearestInsert(records *locationRecords) []int {
+	var currentPlace = make([]int, 0)
+	placesNotIn := records.index
+	chosenPlace := rand.Intn(len(placesNotIn))
+	currentPlace = append(currentPlace, chosenPlace)
+	placesNotIn = remove(placesNotIn, chosenPlace)
+	isFirstChoose := true
+	choose := func() int {
+		var nearest float64
+		if isFirstChoose {
+			nearest = records.distance(chosenPlace, placesNotIn[0])
+			isFirstChoose = false
+		} else {
+			nearest = math.MaxFloat64
+		}
+		targetIndex := 0
+		for _, place := range currentPlace {
+			for j, target := range placesNotIn {
+				distance := records.distance(place, target)
+				if distance < nearest {
+					nearest = distance
+					targetIndex = j
+				}
+			}
+		}
+		returnIndex := placesNotIn[targetIndex]
+		placesNotIn = remove(placesNotIn, targetIndex)
+		return returnIndex
+	}
+
+	reArrangeRoute := func(newPlace int) {
+		shortestDistance := math.MaxFloat64
+		var shortestRoute []int
+		var fairlyShortRoute []int
+
+		for i := range currentPlace {
+			if i == 0 {
+				fairlyShortRoute = append([]int{newPlace}, currentPlace...)
+			} else if i == len(currentPlace)-1 {
+				fairlyShortRoute = append(currentPlace, newPlace)
+			} else {
+				fairlyShortRoute = append(currentPlace[:i+1], currentPlace[i:]...)
+				fairlyShortRoute[i] = newPlace
+			}
+			distance := totalDistance(fairlyShortRoute, records)
+			if shortestDistance > distance {
+				shortestDistance = distance
+				shortestRoute = fairlyShortRoute
+			}
+		}
+		currentPlace = shortestRoute
+
+	}
+
+	for len(placesNotIn) > 1 {
+		reArrangeRoute(choose())
+	}
+	reArrangeRoute(placesNotIn[0])
+	return currentPlace
+
+}
