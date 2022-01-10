@@ -131,5 +131,5 @@ func main() {
 	df := tableLoader("distance.csv")
 	Summarize(&df, NearestNeighbor, "NearestNeighbor")
 	Summarize(&df, NearestInsert, "NearestInsert")
-
+	Summarize(&df, FarthestInsert, "FarthestInsert")
 }
