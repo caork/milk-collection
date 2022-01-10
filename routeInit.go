@@ -5,6 +5,8 @@ import (
 	"math/rand"
 )
 
+type routeAlgorithm func(records *locationRecords) []int // interface of route algorithms
+
 func remove(s []int, i int) []int { // order is not matters
 	s[i] = s[len(s)-1]
 	return s[:len(s)-1]
@@ -30,8 +32,9 @@ func totalDistance(s []int, records *locationRecords) float64 { // total distanc
 }
 
 func NearestNeighbor(records *locationRecords) []int {
-	var currentPlace []int
-	placesNotIn := records.index
+	var currentPlace = make([]int, 0)
+	placesNotIn := make([]int, len(records.index))
+	copy(placesNotIn, records.index)
 	chosenPlace := rand.Intn(len(placesNotIn))
 
 	nextPlace := func() int {
@@ -60,7 +63,8 @@ func NearestNeighbor(records *locationRecords) []int {
 
 func NearestInsert(records *locationRecords) []int {
 	var currentPlace = make([]int, 0)
-	placesNotIn := records.index
+	placesNotIn := make([]int, len(records.index))
+	copy(placesNotIn, records.index)
 	chosenPlace := rand.Intn(len(placesNotIn))
 	currentPlace = append(currentPlace, chosenPlace)
 	placesNotIn = remove(placesNotIn, chosenPlace)
@@ -90,16 +94,17 @@ func NearestInsert(records *locationRecords) []int {
 
 	reArrangeRoute := func(newPlace int) {
 		shortestDistance := math.MaxFloat64
-		var shortestRoute []int
+		var shortestRoute = make([]int, len(records.index))
 		var fairlyShortRoute []int
-
-		for i := range currentPlace {
+		var currentPlaceCopy = make([]int, len(currentPlace))
+		copy(currentPlaceCopy, currentPlace)
+		for i := range currentPlaceCopy {
 			if i == 0 {
-				fairlyShortRoute = append([]int{newPlace}, currentPlace...)
-			} else if i == len(currentPlace)-1 {
-				fairlyShortRoute = append(currentPlace, newPlace)
+				fairlyShortRoute = append([]int{newPlace}, currentPlaceCopy...)
+			} else if i == len(currentPlaceCopy)-1 {
+				fairlyShortRoute = append(currentPlaceCopy, newPlace)
 			} else {
-				fairlyShortRoute = append(currentPlace[:i+1], currentPlace[i:]...)
+				fairlyShortRoute = append(currentPlaceCopy[:i+1], currentPlaceCopy[i:]...)
 				fairlyShortRoute[i] = newPlace
 			}
 			distance := totalDistance(fairlyShortRoute, records)

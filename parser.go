@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/csv"
+	"fmt"
 	"log"
 	"math"
 	"os"
@@ -86,9 +87,49 @@ func newSlice(start, end, step int) []int {
 	return s
 }
 
+func TotalDistance(route []int, records *locationRecords) float64 {
+	distance := 0.0
+	origin := -1
+	from := -1
+	for i, to := range route {
+		if i == 0 {
+			origin = to
+			from = to
+		} else if i < len(route)-1 {
+			distance += records.distance(from, to)
+			from = to
+		} else {
+			distance += records.distance(to, origin)
+		}
+	}
+	return distance
+}
+
+func RoutePrint(route []int) {
+	origin := -1
+	for i, s := range route {
+		if i == 0 {
+			origin = s
+			fmt.Printf("%d -> ", s)
+		} else if i < len(route)-1 {
+			fmt.Printf("%d -> ", s)
+		} else {
+			fmt.Printf("%d -> %d", s, origin)
+		}
+	}
+}
+
+func Summarize(local *locationRecords, algorithm routeAlgorithm, name string) {
+	route := algorithm(local)
+	fmt.Println("Route Algorithm: ", name)
+	RoutePrint(route)
+	fmt.Println("")
+	fmt.Printf("Toal distance is %f \n", TotalDistance(route, local))
+}
+
 func main() {
 	df := tableLoader("distance.csv")
-	for _, s := range NearestInsert(&df) {
-		println(s)
-	}
+	Summarize(&df, NearestNeighbor, "NearestNeighbor")
+	Summarize(&df, NearestInsert, "NearestInsert")
+
 }
