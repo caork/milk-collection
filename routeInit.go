@@ -62,10 +62,24 @@ func NearestNeighbor(records *locationRecords) []int {
 }
 
 func NearestInsert(records *locationRecords) []int {
+	distance := math.MaxFloat64
+	route := make([]int, 0)
+	for _, s := range records.index {
+		thisRoute := randomNearestInsert(records, s)
+		thisWay := totalDistance(thisRoute, records)
+		if thisWay < distance {
+			distance = thisWay
+			route = thisRoute
+		}
+	}
+	return route
+}
+
+func randomNearestInsert(records *locationRecords, startPlace int) []int {
 	var currentPlace = make([]int, 0)
 	placesNotIn := make([]int, len(records.index))
 	copy(placesNotIn, records.index)
-	chosenPlace := rand.Intn(len(placesNotIn))
+	chosenPlace := startPlace
 	currentPlace = append(currentPlace, chosenPlace)
 	placesNotIn = remove(placesNotIn, chosenPlace)
 	isFirstChoose := true
