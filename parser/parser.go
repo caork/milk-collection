@@ -1,22 +1,43 @@
-package main
+package parser
 
 import (
 	"encoding/csv"
 	"fmt"
 	"log"
 	"math"
+	"milk-collection/routeStructure"
 	"os"
 	"strconv"
+	"strings"
 )
 
-type locationRecords struct {
+type RouteAlgorithm func(records *LocationRecords) []int // interface of route algorithms
+type RouteAlgorithmLinked func(records *LocationRecords, chosePlace int) (*routeStructure.List, float64)
+
+type LocationRecords struct {
 	records       [][]string
-	index         []int
+	Index         []int
 	storedRecords [][]float64
-	distance      func(int, int) float64
+	Distance      func(int, int) float64
 }
 
-func tableLoader(filePath string) locationRecords { // csv loader
+func LinkedToString(route *routeStructure.List, stringRoute *strings.Builder) *strings.Builder {
+	stringRoute.Reset()
+	isFirst := true
+	for i := route.Front(); i != nil; i = i.Next() {
+		if isFirst {
+			stringRoute.WriteString(strconv.Itoa(i.Value))
+			isFirst = false
+		} else {
+			stringRoute.WriteString("->")
+			stringRoute.WriteString(strconv.Itoa(i.Value))
+		}
+	}
+	return stringRoute
+
+}
+
+func TableLoader(filePath string) LocationRecords { // csv loader
 	f, err := os.Open(filePath)
 	if err != nil {
 		log.Fatal("Unable to read input file "+filePath, err)
@@ -30,17 +51,17 @@ func tableLoader(filePath string) locationRecords { // csv loader
 	}
 	storedRecords := newMatrix(len(records), len(records), -1)
 
-	location := locationRecords{
+	location := LocationRecords{
 		records:       records,
-		index:         newSlice(0, len(records)-1, 1),
+		Index:         newSlice(0, len(records)-1, 1),
 		storedRecords: storedRecords,
-		distance: func(from int, to int) float64 {
+		Distance: func(from int, to int) float64 {
 
-			getFromIndex := func(index int) [2]int64 {
-				var thisLocation [2]int64
+			getFromIndex := func(index int) [2]float64 {
+				var thisLocation [2]float64
 				info := records[index]
-				thisLocation[0], _ = strconv.ParseInt(info[1], 0, 64)
-				thisLocation[1], _ = strconv.ParseInt(info[2], 0, 64)
+				thisLocation[0], _ = strconv.ParseFloat(info[1], 64)
+				thisLocation[1], _ = strconv.ParseFloat(info[2], 64)
 				return thisLocation
 			}
 
@@ -87,7 +108,7 @@ func newSlice(start, end, step int) []int {
 	return s
 }
 
-func TotalDistance(route []int, records *locationRecords) float64 {
+func TotalDistance(route []int, records *LocationRecords) float64 {
 	distance := 0.0
 	origin := -1
 	from := -1
@@ -96,10 +117,10 @@ func TotalDistance(route []int, records *locationRecords) float64 {
 			origin = to
 			from = to
 		} else if i < len(route)-1 {
-			distance += records.distance(from, to)
+			distance += records.Distance(from, to)
 			from = to
 		} else {
-			distance += records.distance(to, origin)
+			distance += records.Distance(to, origin)
 		}
 	}
 	return distance
@@ -119,7 +140,7 @@ func RoutePrint(route []int) {
 	}
 }
 
-func Summarize(local *locationRecords, algorithm routeAlgorithm, name string) {
+func Summarize(local *LocationRecords, algorithm RouteAlgorithm, name string) {
 	route := algorithm(local)
 	fmt.Println("Route Algorithm: ", name)
 	RoutePrint(route)
@@ -127,9 +148,11 @@ func Summarize(local *locationRecords, algorithm routeAlgorithm, name string) {
 	fmt.Printf("Toal distance is %f \n", TotalDistance(route, local))
 }
 
-func main() {
-	df := tableLoader("distance.csv")
-	Summarize(&df, NearestNeighbor, "NearestNeighbor")
-	Summarize(&df, NearestInsert, "NearestInsert")
-	Summarize(&df, FarthestInsert, "FarthestInsert")
+func SummarizeLinked(local *LocationRecords, algorithm RouteAlgorithmLinked, name string) {
+	route, distance := algorithm(local, 1)
+	var routeline strings.Builder
+	fmt.Println("Route Algorithm: ", name)
+	routeline = *LinkedToString(route, &routeline)
+	fmt.Println(routeline.String())
+	fmt.Printf("Toal distance is %f \n", distance)
 }
