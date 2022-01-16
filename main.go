@@ -8,10 +8,16 @@ import (
 )
 
 func main() {
-	f, _ := os.OpenFile("cpu.profile", os.O_CREATE|os.O_RDWR, 0644)
-	defer f.Close()
-	pprof.StartCPUProfile(f)
+	fc, _ := os.OpenFile("cpu.profile", os.O_CREATE|os.O_RDWR, 0644)
+	defer fc.Close()
+	pprof.StartCPUProfile(fc)
 	defer pprof.StopCPUProfile()
+
+	fm, _ := os.OpenFile("mem.profile", os.O_CREATE|os.O_RDWR, 0644)
+	defer fm.Close()
+
+	pprof.Lookup("heap").WriteTo(fm, 0)
+
 	df := parser.TableLoader("finland1000.csv")
 	// Summarize(&df, NearestNeighbor, "NearestNeighbor")
 	// Summarize(&df, NearestInsert, "NearestInsert")
