@@ -5,6 +5,7 @@ import (
 	"math"
 	"math/rand"
 	"milk-collection/parser"
+	"milk-collection/routeStructure"
 	"time"
 )
 
@@ -40,8 +41,18 @@ func newPair(bitmap *roaring.Bitmap, routeRange uint32, records *parser.Location
 	return left, right
 }
 
-//func annealing(route *routeStructure.List, records *parser.LocationRecords) {
-//	sliceRoute := route.ToSlice()
-//	alreadyChosen := roaring.New()
-//
-//}
+func annealing(route *routeStructure.List, records *parser.LocationRecords) {
+	sliceRoute := route.ToSlice()
+	alreadyChosen := roaring.New()
+	exchange := func(left int, right int) {
+		tmp := sliceRoute[left]
+		sliceRoute[left] = sliceRoute[right]
+		sliceRoute[right] = sliceRoute[tmp]
+	}
+
+	for true {
+		left, right := newPair(alreadyChosen, uint32(route.Len()), records)
+		exchange(int(left), int(right))
+	}
+
+}
