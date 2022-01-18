@@ -240,9 +240,11 @@ func (l *List) PushFrontList(other *List) {
 }
 
 func (l *List) ToSlice() []int {
-	var line = make([]int, 0)
+	var line = make([]int, l.Len())
+	var index = 0
 	for i := l.Front(); i != nil; i = i.Next() {
-		line = append(line, i.Value)
+		line[index] = i.Value
+		index += 1
 	}
 	return line
 }

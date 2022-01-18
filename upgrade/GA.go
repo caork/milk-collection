@@ -1,6 +1,6 @@
-package main
+package upgrade
 
 type individual struct {
 	features []int64 //parameters
-	score    float64 // score
+	score    float32 // score
 }

@@ -22,5 +22,5 @@ func main() {
 	// Summarize(&df, NearestNeighbor, "NearestNeighbor")
 	// Summarize(&df, NearestInsert, "NearestInsert")
 	// parser.Summarize(&df, sliceRoute.FarthestInsert, "FarthestInsert") // 43799.413274
-	parser.SummarizeLinked(&df, LinkedRoute.CheapestInsert, "CheapestInsert")
+	parser.SummarizeLinked(&df, LinkedRoute.CheapestInsert, "CheapestInsert") //41577.380091
 }
