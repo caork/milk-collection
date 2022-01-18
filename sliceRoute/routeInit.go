@@ -15,13 +15,13 @@ func removeWithOrder(s []int, i int) []int { // order matters
 	return append(s[:i], s[i+1:]...)
 }
 
-func totalDistance(s []int, records *parser.LocationRecords) float64 { // total distance
+func totalDistance(s []int, records *parser.LocationRecords) float32 { // total distance
 	if len(s) <= 1 {
-		return math.MaxFloat64
+		return math.MaxFloat32
 	}
 	first := s[0]
 	from := s[0]
-	var total float64 = 0.0
+	var total float32 = 0.0
 	for i := 1; i < len(s); i++ {
 		total += records.Distance(from, s[i])
 		from = s[i]
@@ -61,17 +61,17 @@ func NearestNeighbor(records *parser.LocationRecords) []int {
 }
 
 func FarthestInsert(records *parser.LocationRecords) []int {
-	//distance := math.MaxFloat64
-	//route := make([]int, 0)
-	//for _, s := range records.index {
-	//	thisRoute := NearestOrFarthestInsert(records, s)
-	//	thisWay := totalDistance(thisRoute, records)
-	//	if thisWay < distance {
-	//		distance = thisWay
-	//		route = thisRoute
-	//	}
-	//}
-	return NearestOrFarthestInsert(records, 1)
+	var distance float32 = math.MaxFloat32
+	route := make([]int, 0)
+	for _, s := range records.Index {
+		thisRoute := NearestOrFarthestInsert(records, s)
+		thisWay := totalDistance(thisRoute, records)
+		if thisWay < distance {
+			distance = thisWay
+			route = thisRoute
+		}
+	}
+	return route
 }
 
 func NearestOrFarthestInsert(records *parser.LocationRecords, startPlace int) []int {
@@ -82,8 +82,8 @@ func NearestOrFarthestInsert(records *parser.LocationRecords, startPlace int) []
 	currentPlace = append(currentPlace, chosenPlace)
 	placesNotIn = remove(placesNotIn, chosenPlace)
 
-	reArrangeRoute := func(newPlace int) ([]int, float64) {
-		shortestDistance := math.MaxFloat64
+	reArrangeRoute := func(newPlace int) ([]int, float32) {
+		var shortestDistance float32 = math.MaxFloat32
 		var shortestRoute []int //var shortestRoute = make([]int, len(records.index))
 		var fairlyShortRoute []int
 		var currentPlaceCopy = make([]int, len(currentPlace))
@@ -107,7 +107,7 @@ func NearestOrFarthestInsert(records *parser.LocationRecords, startPlace int) []
 
 	}
 	var shortestRoute []int
-	var shortestDistance = math.MaxFloat64
+	var shortestDistance float32 = math.MaxFloat32
 	var theChoosePlace int
 	for len(placesNotIn) >= 1 {
 		for i, p := range placesNotIn {

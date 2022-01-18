@@ -3,6 +3,7 @@ package LinkedRoute
 import (
 	"math"
 	"math/rand"
+	"milk-collection/math32"
 	"milk-collection/parser"
 	"milk-collection/routeStructure"
 )
@@ -19,13 +20,13 @@ func remove(s []int, i int) []int { // order is not matters
 	return s[:len(s)-1]
 }
 
-func totalDistance(route *routeStructure.List, records *parser.LocationRecords) float64 {
+func totalDistance(route *routeStructure.List, records *parser.LocationRecords) float32 {
 	if route.Len() <= 1 {
-		return math.MaxFloat64
+		return math.MaxFloat32
 	}
 	first := route.Front().Value
 	from := route.Front().Value
-	distance := 0.0
+	var distance float32 = 0.0
 	for p := route.Front().Next(); p != nil; p = p.Next() {
 		distance += records.Distance(from, p.Value)
 		from = p.Value
@@ -38,8 +39,8 @@ func reArrange(currentPlace *routeStructure.List, placeNotIn []int, records *par
 
 	var place int
 	var insertAfter *routeStructure.Element
-	var currentCost float64
-	var minimumCost = math.MaxFloat64
+	var currentCost float32
+	var minimumCost float32 = math.MaxFloat32
 	for _, p := range placeNotIn {
 		for i := currentPlace.Front(); i != nil; i = i.Next() {
 			if currentPlace.Len() == 1 {
@@ -61,13 +62,13 @@ func reArrange(currentPlace *routeStructure.List, placeNotIn []int, records *par
 	return place, insertAfter
 }
 
-func cost(left int, right int, insertValue int, records *parser.LocationRecords) float64 {
+func cost(left int, right int, insertValue int, records *parser.LocationRecords) float32 {
 	preCost := records.Distance(left, right)
 	currentCost := records.Distance(left, insertValue) + records.Distance(insertValue, right)
-	return math.Abs(currentCost - preCost)
+	return math32.Abs(currentCost - preCost)
 }
 
-func CheapestInsert(records *parser.LocationRecords, startPlace int) (*routeStructure.List, float64) {
+func CheapestInsert(records *parser.LocationRecords, startPlace int) (*routeStructure.List, float32) {
 	if startPlace == -1 {
 		startPlace = rand.Intn(len(records.Index))
 	}
@@ -79,7 +80,7 @@ func CheapestInsert(records *parser.LocationRecords, startPlace int) (*routeStru
 	currentPlace.PushBack(startPlace)
 	placeNotIn = remove(placeNotIn, startPlace)
 
-	for len(placeNotIn) > 1 {
+	for len(placeNotIn) >= 1 {
 		chosenPlace, index := reArrange(currentPlace, placeNotIn, records)
 		currentPlace.InsertAfter(chosenPlace, index)
 		placeNotIn = remove(placeNotIn, chosenPlace)
