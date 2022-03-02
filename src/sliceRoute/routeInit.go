@@ -3,7 +3,7 @@ package sliceRoute
 import (
 	"math"
 	"math/rand"
-	"milk-collection/parser"
+	"milk-collection/src/parser"
 )
 
 func remove(s []int, i int) []int { // order is not matters

@@ -3,9 +3,9 @@ package LinkedRoute
 import (
 	"math"
 	"math/rand"
-	"milk-collection/math32"
-	"milk-collection/parser"
-	"milk-collection/routeStructure"
+	"milk-collection/src/math32"
+	"milk-collection/src/parser"
+	"milk-collection/src/routeStructure"
 )
 
 func remove(s []int, i int) []int { // order is not matters

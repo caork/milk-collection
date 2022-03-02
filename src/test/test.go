@@ -2,7 +2,7 @@ package test
 
 import (
 	"fmt"
-	"milk-collection/routeStructure"
+	"milk-collection/src/routeStructure"
 )
 
 func main() {

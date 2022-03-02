@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"log"
 	"math"
-	"milk-collection/math32"
-	"milk-collection/routeStructure"
+	math322 "milk-collection/src/math32"
+	"milk-collection/src/routeStructure"
 	"os"
 	"strconv"
 	"strings"
@@ -77,7 +77,7 @@ func TableLoader(filePath string) LocationRecords { // csv loader
 				toLocation := getFromIndex(to)
 				horizontal := fromLocation[0] - toLocation[0]
 				vertical := fromLocation[1] - toLocation[1]
-				var thisDistance float32 = math32.Sqrt(math32.Pow(horizontal, 2) + math32.Pow(vertical, 2))
+				var thisDistance float32 = math322.Sqrt(math322.Pow(horizontal, 2) + math322.Pow(vertical, 2))
 				storedRecords[from][to] = thisDistance
 				return thisDistance
 			}

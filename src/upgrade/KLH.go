@@ -4,8 +4,8 @@ import (
 	"github.com/RoaringBitmap/roaring"
 	"math"
 	"math/rand"
-	"milk-collection/parser"
-	"milk-collection/routeStructure"
+	"milk-collection/src/parser"
+	"milk-collection/src/routeStructure"
 	"time"
 )
 

@@ -1,8 +1,8 @@
 package main
 
 import (
-	"milk-collection/LinkedRoute"
-	"milk-collection/parser"
+	"milk-collection/src/LinkedRoute"
+	"milk-collection/src/parser"
 	"os"
 	"runtime/pprof"
 )
@@ -18,7 +18,7 @@ func main() {
 
 	pprof.Lookup("heap").WriteTo(fm, 0)
 
-	df := parser.TableLoader("finland1000.csv")
+	df := parser.TableLoader("data/finland1000.csv")
 	// Summarize(&df, NearestNeighbor, "NearestNeighbor")
 	// Summarize(&df, NearestInsert, "NearestInsert")
 	// parser.Summarize(&df, sliceRoute.FarthestInsert, "FarthestInsert") // 43799.413274

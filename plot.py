@@ -10,7 +10,7 @@ index = index.strip()
 places = list(map(int, index.split("->")))
 
 # %%
-df = pd.read_csv("distance.csv", header=None)
+df = pd.read_csv("data/distance.csv", header=None)
 lines = df.reindex(places)
 
 fig, ax = plt.subplots()
